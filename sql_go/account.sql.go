@@ -41,8 +41,12 @@ func main() {
 
 	//createAccount(db, `HongWei`, 100, `NT`)
 	var Account account = getAccount(db, `HongWei`)
+	fmt.Printf("Your Name: %s\nYour balance: %d\nCurrency\n: %s\n", Account.owner, Account.balance, Account.currency)
 
-	fmt.Printf("Your Name: %s\nYour balance: %d\nCurrency\n: %s", Account.owner, Account.balance, Account.currency)
+	updateAccount(db, `HongWei`, 102)
+
+	var Account1 account = getAccount(db, `HongWei`)
+	fmt.Printf("Your Name: %s\nYour balance: %d\nCurrency: %s\n", Account1.owner, Account1.balance, Account1.currency)
 
 }
 
@@ -74,6 +78,16 @@ func getAccount(db *sql.DB, owner string) account {
 }
 
 func updateAccount(db *sql.DB, owner string, balance int) {
+	sqlstatement := `UPDATE account SET balance = $1 WHERE owner = $2`
+
+	//id := 0
+	_, err := db.Exec(sqlstatement, balance, owner)
+
+	if err != nil {
+		log.Fatalf("Unable to update the account!Infor:%v\n", err)
+	}
+
+	fmt.Printf("Update Successfully!")
 
 }
 
