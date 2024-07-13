@@ -16,6 +16,12 @@ const (
 	dbname   = "bank"
 )
 
+type account struct {
+	owner    string
+	balance  int
+	currency string
+}
+
 func main() {
 	// 连接数据库
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
@@ -33,14 +39,11 @@ func main() {
 
 	fmt.Println("Successfully connected!")
 
-	createAccount(db, `HongWei`, 100, `NT`)
+	//createAccount(db, `HongWei`, 100, `NT`)
+	var Account account = getAccount(db, `HongWei`)
 
-}
+	fmt.Printf("Your Name: %s\nYour balance: %d\nCurrency\n: %s", Account.owner, Account.balance, Account.currency)
 
-type account struct {
-	owner    string
-	balance  int
-	currency string
 }
 
 func createAccount(db *sql.DB, owner string, balance int, currency string) {
@@ -56,11 +59,21 @@ func createAccount(db *sql.DB, owner string, balance int, currency string) {
 	fmt.Printf("Create Successfully!Your ID is %d", id)
 }
 
-//func getAccount(db *sql.DB) account {
-//
-//}
+func getAccount(db *sql.DB, owner string) account {
+	sqlstatement := `SELECT owner,balance,currency from account WHERE owner = $1`
 
-func updateAccount(db *sql.DB, balance int) {
+	tmp := account{}
+
+	err := db.QueryRow(sqlstatement, owner).Scan(&tmp.owner, &tmp.balance, &tmp.currency)
+
+	if err != nil {
+		log.Fatalf("Unable to create the account!Infor:%v\n", err)
+	}
+
+	return tmp
+}
+
+func updateAccount(db *sql.DB, owner string, balance int) {
 
 }
 
