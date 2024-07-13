@@ -62,12 +62,12 @@ func createAccount(db *sql.DB, owner string, balance int, currency string) {
 func getAccount(db *sql.DB, owner string) account {
 	sqlstatement := `SELECT owner,balance,currency from account WHERE owner = $1`
 
-	tmp := account{}
+	var tmp account = account{}
 
 	err := db.QueryRow(sqlstatement, owner).Scan(&tmp.owner, &tmp.balance, &tmp.currency)
 
 	if err != nil {
-		log.Fatalf("Unable to create the account!Infor:%v\n", err)
+		log.Fatalf("Unable to get the account!Infor:%v\n", err)
 	}
 
 	return tmp
