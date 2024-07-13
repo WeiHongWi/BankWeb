@@ -22,6 +22,7 @@ type account struct {
 	currency string
 }
 
+/*
 func main() {
 	// 连接数据库
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
@@ -48,7 +49,7 @@ func main() {
 	var Account1 account = getAccount(db, `HongWei`)
 	fmt.Printf("Your Name: %s\nYour balance: %d\nCurrency: %s\n", Account1.owner, Account1.balance, Account1.currency)
 
-}
+}*/
 
 func createAccount(db *sql.DB, owner string, balance int, currency string) {
 	sqlstatement := `INSERT INTO account (owner,balance,currency) VALUES($1,$2,$3) RETURNING id`
