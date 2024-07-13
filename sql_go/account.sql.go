@@ -13,7 +13,7 @@ const (
 	port     = 5432
 	user     = "root"
 	password = "fighting"
-	dbname   = "root"
+	dbname   = "bank"
 )
 
 func main() {
@@ -32,6 +32,9 @@ func main() {
 	}
 
 	fmt.Println("Successfully connected!")
+
+	createAccount(db, `HongWei`, 100, `NT`)
+
 }
 
 type account struct {
@@ -41,12 +44,21 @@ type account struct {
 }
 
 func createAccount(db *sql.DB, owner string, balance int, currency string) {
+	sqlstatement := `INSERT INTO account (owner,balance,currency) VALUES($1,$2,$3) RETURNING id`
+	id := 0
 
+	err := db.QueryRow(sqlstatement, owner, balance, currency).Scan(&id)
+
+	if err != nil {
+		log.Fatalf("Unable to create the account!Infor:%v\n", err)
+	}
+
+	fmt.Printf("Create Successfully!Your ID is %d", id)
 }
 
-func getAccount(db *sql.DB) account {
-
-}
+//func getAccount(db *sql.DB) account {
+//
+//}
 
 func updateAccount(db *sql.DB, balance int) {
 
