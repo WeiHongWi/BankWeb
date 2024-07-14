@@ -38,16 +38,20 @@ func main() {
 
 	q := CRUD.New(db)
 	ctx := context.Background()
-	arg := CRUD.CreateAccountParam{
-		Owner:    "Alice",
-		Balance:  1000,
-		Currency: "USD",
+	arg := CRUD.GetAccountParam{
+		ID: 1,
 	}
-	account, err := q.CreateAccount(ctx, arg)
+	/*
+		arg := CRUD.CreateAccountParam{
+			Owner:    "Alice",
+			Balance:  1000,
+			Currency: "USD",
+		}*/
+	account, err := q.GetAccount(ctx, arg)
 
 	if err != nil {
 		fmt.Printf("I am so bad!\n")
 	}
-	fmt.Printf("Created account: %+v\n", account)
-
+	//fmt.Printf("Created account: %+v\n", account)
+	fmt.Printf("Get account: %+v\n", account)
 }

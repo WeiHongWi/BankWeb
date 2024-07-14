@@ -2,6 +2,7 @@ package CRUD
 
 import (
 	"context"
+	"database/sql"
 
 	_ "github.com/lib/pq"
 )
@@ -15,6 +16,14 @@ type CreateAccountParam struct {
 	Owner    string
 	Balance  int64
 	Currency string
+}
+
+const GetAccountSQL = `SELECT 
+					  	"ID","Owner","Balance","Currency","Createdat" 
+					   FROM "Account" WHERE "ID" = $1`
+
+type GetAccountParam struct {
+	ID int64
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Account, error) {
@@ -31,15 +40,24 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Ac
 	return A, err
 }
 
-/*func getAccount(db *sql.DB, owner string) account {
+func (q *Queries) GetAccount(ctx context.Context, arg GetAccountParam) (Account, error) {
+	tmp := q.db.QueryRowContext(ctx, GetAccountSQL, arg.ID)
+	var A Account
+	err := tmp.Scan(
+		&A.ID,
+		&A.Owner,
+		&A.Balance,
+		&A.Currency,
+		&A.Createdat,
+	)
+
+	return A, err
+}
+
+func UpdateAccount(db *sql.DB, owner string, balance int) {
 
 }
 
-func updateAccount(db *sql.DB, owner string, balance int) {
+func DeleteAccount(db *sql.DB, owner string) {
 
 }
-
-func deleteAccount(db *sql.DB, owner string) {
-
-}
-*/
