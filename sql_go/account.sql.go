@@ -6,15 +6,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const Createaccountsql = `
-    INSERT INTO account(
-		Owner,
-		Balance,
-		Currency
-	)VALUES(
-	    $1,$2,$3
-	)RETURNING id,owner,balance,currency,createdat
-`
+const CreateAccountSQL = `INSERT INTO "Account" 
+("Owner","Balance","Currency") 
+VALUES($1,$2,$3) 
+RETURNING "ID","Owner","Balance","Currency","Createdat"`
 
 type CreateAccountParam struct {
 	Owner    string
@@ -23,7 +18,7 @@ type CreateAccountParam struct {
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Account, error) {
-	tmp := q.db.QueryRowContext(ctx, Createaccountsql, arg.Owner, arg.Balance, arg.Currency)
+	tmp := q.db.QueryRowContext(ctx, CreateAccountSQL, arg.Owner, arg.Balance, arg.Currency)
 	var A Account
 	err := tmp.Scan(
 		&A.ID,
