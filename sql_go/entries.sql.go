@@ -8,11 +8,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type entries struct {
-	account_id int
-	amount     int
-}
-
 func main() {
 	// 连接数据库
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
