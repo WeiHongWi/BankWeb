@@ -37,6 +37,16 @@ type ListAccountParam struct {
 	Limit  int32
 }
 
+const UpdateAccountSQL = `
+UPDATE "Account"
+SET "Balance" = $1
+WHERE "ID" = $2`
+
+type UpdateAccountParam struct {
+	Balance int64
+	ID      int64
+}
+
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Account, error) {
 	tmp := q.db.QueryRowContext(ctx, CreateAccountSQL, arg.Owner, arg.Balance, arg.Currency)
 	var A Account
@@ -98,8 +108,10 @@ func (q *Queries) ListAccount(ctx context.Context, arg ListAccountParam) ([]Acco
 	}
 	return A_arr, nil
 }
-func UpdateAccount(db *sql.DB, owner string, balance int) {
 
+func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParam) error {
+	_, err := q.db.ExecContext(ctx, UpdateAccountSQL, arg.Balance, arg.ID)
+	return err
 }
 
 func DeleteAccount(db *sql.DB, owner string) {

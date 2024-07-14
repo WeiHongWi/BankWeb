@@ -39,25 +39,29 @@ func main() {
 	ctx := context.Background()
 	/*
 		arg := CRUD.GetAccountParam{
-			ID: 1,
+				ID: 1,
 		}
-		/*
-			arg := CRUD.CreateAccountParam{
+
+		arg := CRUD.CreateAccountParam{
 				Owner:    "Alice",
 				Balance:  1000,
 				Currency: "USD",
-			}*/
-	arg := CRUD.ListAccountParam{
-		Limit:  4,
-		Offset: 2,
+		}
+		arg := CRUD.ListAccountParam{
+			Limit:  4,
+			Offset: 2,
+		}
+	*/
+	arg := CRUD.UpdateAccountParam{
+		Balance: 87,
+		ID:      2,
 	}
-
-	account, er := q.ListAccount(ctx, arg)
+	er := q.UpdateAccount(ctx, arg)
 
 	if er != nil {
 		fmt.Printf("I am so bad!\n")
 	}
 	//fmt.Printf("Created account: %+v\n", account)
 	//fmt.Printf("Get account: %+v\n", account)
-	fmt.Printf(" account: %+v\n", account)
+	//fmt.Printf(" account: %+v\n", account)
 }
