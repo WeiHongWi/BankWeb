@@ -38,25 +38,28 @@ func main() {
 	q := CRUD.New(db)
 	ctx := context.Background()
 	/*
-		arg := CRUD.GetAccountParam{
-				ID: 1,
-		}
+				arg := CRUD.GetAccountParam{
+						ID: 1,
+				}
 
-		arg := CRUD.CreateAccountParam{
-				Owner:    "Alice",
-				Balance:  1000,
-				Currency: "USD",
-		}
-		arg := CRUD.ListAccountParam{
-			Limit:  4,
-			Offset: 2,
-		}
-	*/
-	arg := CRUD.UpdateAccountParam{
-		Balance: 87,
-		ID:      2,
+				arg := CRUD.CreateAccountParam{
+						Owner:    "Alice",
+						Balance:  1000,
+						Currency: "USD",
+				}
+				arg := CRUD.ListAccountParam{
+					Limit:  4,
+					Offset: 2,
+		        }
+
+				arg := CRUD.UpdateAccountParam{
+					Balance: 87,
+					ID:      2,
+				}*/
+	arg := CRUD.DeleteAccountParam{
+		ID: 2,
 	}
-	er := q.UpdateAccount(ctx, arg)
+	er := q.DeleteAccount(ctx, arg)
 
 	if er != nil {
 		fmt.Printf("I am so bad!\n")

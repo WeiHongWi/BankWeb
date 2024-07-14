@@ -2,12 +2,12 @@ package CRUD
 
 import (
 	"context"
-	"database/sql"
 
 	_ "github.com/lib/pq"
 )
 
-const CreateAccountSQL = `INSERT INTO "Account" 
+const CreateAccountSQL = `
+INSERT INTO "Account" 
 ("Owner","Balance","Currency") 
 VALUES($1,$2,$3) 
 RETURNING "ID","Owner","Balance","Currency","Createdat"`
@@ -18,15 +18,17 @@ type CreateAccountParam struct {
 	Currency string
 }
 
-const GetAccountSQL = `SELECT 
-					  	"ID","Owner","Balance","Currency","Createdat" 
-					   FROM "Account" WHERE "ID" = $1`
+const GetAccountSQL = `
+SELECT 
+"ID","Owner","Balance","Currency","Createdat" 
+FROM "Account" WHERE "ID" = $1`
 
 type GetAccountParam struct {
 	ID int64
 }
 
-const ListAccountSQL = `SELECT "ID","Owner","Balance","Currency","Createdat" 
+const ListAccountSQL = `
+SELECT "ID","Owner","Balance","Currency","Createdat" 
 FROM "Account"
 ORDER BY "ID"
 LIMIT $1
@@ -45,6 +47,14 @@ WHERE "ID" = $2`
 type UpdateAccountParam struct {
 	Balance int64
 	ID      int64
+}
+
+const DeleteAccountSQL = `
+DELETE FROM "Account"
+WHERE "ID" = $1`
+
+type DeleteAccountParam struct {
+	ID int64
 }
 
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Account, error) {
@@ -114,6 +124,7 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParam) err
 	return err
 }
 
-func DeleteAccount(db *sql.DB, owner string) {
-
+func (q *Queries) DeleteAccount(ctx context.Context, arg DeleteAccountParam) error {
+	_, err := q.db.ExecContext(ctx, DeleteAccountSQL, arg.ID)
+	return err
 }
