@@ -1,12 +1,11 @@
 package main
 
 import (
+	CRUD "bank/sql_go"
 	"context"
 	"database/sql"
 	"fmt"
 	"log"
-
-	CRUD "bank/sql_go"
 
 	_ "github.com/lib/pq"
 )
@@ -38,20 +37,27 @@ func main() {
 
 	q := CRUD.New(db)
 	ctx := context.Background()
-	arg := CRUD.GetAccountParam{
-		ID: 1,
-	}
 	/*
-		arg := CRUD.CreateAccountParam{
-			Owner:    "Alice",
-			Balance:  1000,
-			Currency: "USD",
-		}*/
-	account, err := q.GetAccount(ctx, arg)
+		arg := CRUD.GetAccountParam{
+			ID: 1,
+		}
+		/*
+			arg := CRUD.CreateAccountParam{
+				Owner:    "Alice",
+				Balance:  1000,
+				Currency: "USD",
+			}*/
+	arg := CRUD.ListAccountParam{
+		Limit:  4,
+		Offset: 2,
+	}
 
-	if err != nil {
+	account, er := q.ListAccount(ctx, arg)
+
+	if er != nil {
 		fmt.Printf("I am so bad!\n")
 	}
 	//fmt.Printf("Created account: %+v\n", account)
-	fmt.Printf("Get account: %+v\n", account)
+	//fmt.Printf("Get account: %+v\n", account)
+	fmt.Printf(" account: %+v\n", account)
 }

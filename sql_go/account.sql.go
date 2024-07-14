@@ -26,6 +26,17 @@ type GetAccountParam struct {
 	ID int64
 }
 
+const ListAccountSQL = `SELECT "ID","Owner","Balance","Currency","Createdat" 
+FROM "Account"
+ORDER BY "ID"
+LIMIT $1
+OFFSET $2`
+
+type ListAccountParam struct {
+	Offset int32
+	Limit  int32
+}
+
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Account, error) {
 	tmp := q.db.QueryRowContext(ctx, CreateAccountSQL, arg.Owner, arg.Balance, arg.Currency)
 	var A Account
@@ -53,7 +64,40 @@ func (q *Queries) GetAccount(ctx context.Context, arg GetAccountParam) (Account,
 
 	return A, err
 }
+func (q *Queries) ListAccount(ctx context.Context, arg ListAccountParam) ([]Account, error) {
+	tmps, err := q.db.QueryContext(ctx, ListAccountSQL, arg.Limit, arg.Offset)
 
+	if err != nil {
+		return nil, err
+	}
+
+	defer tmps.Close()
+
+	var A_arr []Account
+
+	for tmps.Next() {
+		var A Account
+		if err := tmps.Scan(
+			&A.ID,
+			&A.Owner,
+			&A.Balance,
+			&A.Currency,
+			&A.Createdat,
+		); err != nil {
+			return nil, err
+		}
+		A_arr = append(A_arr, A)
+	}
+
+	//Avoid next enumeration.
+	if err := tmps.Close(); err != nil {
+		return nil, err
+	}
+	if err := tmps.Err(); err != nil {
+		return nil, err
+	}
+	return A_arr, nil
+}
 func UpdateAccount(db *sql.DB, owner string, balance int) {
 
 }
