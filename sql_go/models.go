@@ -1,26 +1,26 @@
-package db
+package CRUD
 
 import "time"
 
-type account struct {
+type Account struct {
 	ID        int64
-	owner     string
-	balance   int64
-	currency  string
-	createdat time.Time
+	Owner     string
+	Balance   int64
+	Currency  string
+	Createdat time.Time
 }
 
-type entries struct {
+type Entries struct {
 	ID        int64
 	AccountID int64
 	Amount    int64
-	createdat time.Time
+	Createdat time.Time
 }
 
-type transac struct {
+type Transac struct {
 	ID            int64
 	FromAccountID int64
 	ToAccountID   int64
 	Amount        int64
-	createdat     time.Time
+	Createdat     time.Time
 }

@@ -1,4 +1,4 @@
-package db
+package CRUD
 
 import (
 	"context"
