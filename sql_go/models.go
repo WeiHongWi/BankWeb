@@ -11,10 +11,10 @@ type Account struct {
 }
 
 type Entries struct {
-	ID        int64
-	AccountID int64
-	Amount    int64
-	Createdat time.Time
+	ID         int64
+	Account_id int64
+	Amount     int64
+	Createdat  time.Time
 }
 
 type Transac struct {

@@ -1,23 +1,108 @@
 package CRUD
 
 import (
-	"database/sql"
+	"context"
 
 	_ "github.com/lib/pq"
 )
 
-func createEntries(db *sql.DB, account_id int, amount int) {
+const CreateEntriesSQL = `
+INSERT INTO "Entries"
+("Account_id","Amount")
+VALUES
+($1,$2)
+RETURNING "ID","AccountID","Amount","Createdat"
+`
 
+type CreateEntriesParam struct {
+	Account_id int64
+	Amount     int64
 }
 
-/*func getEntries(db *sql.DB, owner string) entries {
+const GetEntriesSQL = `
+SELECT 
+"ID","Account_id","Amount","Createdat"
+FROM "Entries" WHERE "ID" = $1
+LIMIT 1`
 
+type GetEntriesParam struct {
+	ID int64
 }
 
-func updateEntries(db *sql.DB, account_id int, amount int) {
+const ListEntriesSQL = `
+SELECT 
+"ID","Account_id","Amount","Createdat"
+FROM "Entries"
+WHERE "Account_id" = $1
+ORDER BY "ID"
+LIMIT $2
+OFFSET $3
+`
 
+type ListEntriesParam struct {
+	Account_id int64
+	Limit      int32
+	Offset     int32
 }
 
-func deleteEntries(db *sql.DB, account_id int) {
+func (q *Queries) CreateEntries(ctx context.Context, arg CreateEntriesParam) (Entries, error) {
+	tmp := q.db.QueryRowContext(ctx, CreateEntriesSQL, arg.Account_id, arg.Amount)
 
-}*/
+	var E Entries
+	err := tmp.Scan(
+		&E.ID,
+		&E.Account_id,
+		&E.Amount,
+		&E.Createdat,
+	)
+
+	return E, err
+}
+
+func (q *Queries) GetEntries(ctx context.Context, arg GetEntriesParam) (Entries, error) {
+	tmp := q.db.QueryRowContext(ctx, GetEntriesSQL, arg.ID)
+
+	var E Entries
+	err := tmp.Scan(
+		&E.ID,
+		&E.Account_id,
+		&E.Amount,
+		&E.Createdat,
+	)
+
+	return E, err
+}
+
+func (q *Queries) ListEntries(ctx context.Context, arg ListEntriesParam) ([]Entries, error) {
+	rows, err := q.db.QueryContext(ctx, ListEntriesSQL, arg.Account_id, arg.Limit, arg.Offset)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var E_arr []Entries
+
+	for rows.Next() {
+		var E Entries
+		if err = rows.Scan(
+			&E.ID,
+			&E.Account_id,
+			&E.Amount,
+			&E.Createdat,
+		); err != nil {
+			return nil, err
+		}
+		E_arr = append(E_arr, E)
+	}
+
+	if err = rows.Close(); err != nil {
+		return nil, err
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return E_arr, nil
+}
