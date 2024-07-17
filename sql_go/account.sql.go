@@ -57,6 +57,25 @@ type DeleteAccountParam struct {
 	ID int64
 }
 
+const CountOfAccountSQL = `
+SELECT
+COUNT(*)
+FROM "Account"
+`
+
+func (q *Queries) CountOfAccount(ctx context.Context) int64 {
+	row := q.db.QueryRowContext(ctx, CountOfAccountSQL)
+
+	var count int64
+
+	err := row.Scan(&count)
+
+	if err != nil {
+		return count
+	}
+	return count
+
+}
 func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParam) (Account, error) {
 	tmp := q.db.QueryRowContext(ctx, CreateAccountSQL, arg.Owner, arg.Balance, arg.Currency)
 	var A Account
