@@ -17,12 +17,14 @@ const (
 )
 
 var test *Queries
+var db *sql.DB
 
 func TestMain(m *testing.M) {
 	DBinfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	db, err := sql.Open("postgres", DBinfo)
+	var err error
+	db, err = sql.Open("postgres", DBinfo)
 
 	if err != nil {
 		log.Fatalln("Open database failed!")
