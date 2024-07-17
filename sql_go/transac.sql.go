@@ -4,8 +4,30 @@ import (
 	"context"
 )
 
+const CountTransacSQL = `
+SELECT
+COUNT(*)
+FROM "Transac"
+WHERE "From_account_id" = $1 and
+"To_account_id" = $2
+`
+
+type CountTransacParam struct {
+	From_account_id int64
+	To_account_id   int64
+}
+
+func (q *Queries) CountTransac(ctx context.Context, arg CountTransacParam) (int64, error) {
+	tmp := q.db.QueryRowContext(ctx, CountTransacSQL)
+
+	var count int64
+	err := tmp.Scan(&count)
+
+	return count, err
+}
+
 const CreateTransacSQL = `
-INSERT INTO Transac
+INSERT INTO "Transac"
 ("From_account_id","To_account_id","Amount")
 VALUES
 ($1,$2,$3)
@@ -24,8 +46,8 @@ func (q *Queries) CreateTransac(ctx context.Context, arg CreateTransacParam) (Tr
 	var T Transac
 	err := row.Scan(
 		&T.ID,
-		&T.FromAccountID,
-		&T.ToAccountID,
+		&T.From_account_id,
+		&T.To_account_id,
 		&T.Amount,
 		&T.Createdat,
 	)
@@ -43,14 +65,14 @@ type GetTransacParam struct {
 	ID int64
 }
 
-func (q *Queries) GetTransac(ctx context.Context, arg GetAccountParam) (Transac, error) {
+func (q *Queries) GetTransac(ctx context.Context, arg GetTransacParam) (Transac, error) {
 	row := q.db.QueryRowContext(ctx, GetTransacSQL, arg.ID)
 
 	var T Transac
 	err := row.Scan(
 		&T.ID,
-		&T.FromAccountID,
-		&T.ToAccountID,
+		&T.From_account_id,
+		&T.To_account_id,
 		&T.Amount,
 		&T.Createdat,
 	)
@@ -60,9 +82,9 @@ func (q *Queries) GetTransac(ctx context.Context, arg GetAccountParam) (Transac,
 const ListTransacSQL = `
 SELECT "ID","From_account_id","To_account_id","Amount","Createdat"
 FROM "Transac"
-ORDER BY "ID"
 WHERE "From_account_id" = $1 OR
       "To_account_id" = $2
+ORDER BY "ID"
 LIMIT $3
 OFFSET $4
 `
@@ -89,8 +111,8 @@ func (q *Queries) ListTransac(ctx context.Context, arg ListTransacParam) ([]Tran
 		var T Transac
 		if err := rows.Scan(
 			&T.ID,
-			&T.FromAccountID,
-			&T.ToAccountID,
+			&T.From_account_id,
+			&T.To_account_id,
 			&T.Amount,
 			&T.Createdat,
 		); err != nil {

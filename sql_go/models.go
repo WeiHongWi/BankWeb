@@ -18,9 +18,9 @@ type Entries struct {
 }
 
 type Transac struct {
-	ID            int64
-	FromAccountID int64
-	ToAccountID   int64
-	Amount        int64
-	Createdat     time.Time
+	ID              int64
+	From_account_id int64
+	To_account_id   int64
+	Amount          int64
+	Createdat       time.Time
 }
