@@ -8,4 +8,6 @@ migrateup:
 	migrate -path db/migration -database "postgresql://root:fighting@localhost:5432/bank?sslmode=disable" -verbose up
 migratedown:
 	migrate -path db/migration -database "postgresql://root:fighting@localhost:5432/bank?sslmode=disable" -verbose down
+test:
+	go test -v -cover ./...
 .PHONY: createdb,dropdb,postgres,migrateup,migratedownp
