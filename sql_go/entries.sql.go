@@ -11,7 +11,7 @@ INSERT INTO "Entries"
 ("Account_id","Amount")
 VALUES
 ($1,$2)
-RETURNING "ID","AccountID","Amount","Createdat"
+RETURNING "ID","Account_id","Amount","Createdat"
 `
 
 type CreateEntriesParam struct {
@@ -43,6 +43,26 @@ type ListEntriesParam struct {
 	Account_id int64
 	Limit      int32
 	Offset     int32
+}
+
+const CountEntriesSQL = `
+SELECT
+COUNT(*)
+FROM "Entries"
+WHERE "Account_id" = $1
+`
+
+type CountEntriesParam struct {
+	Account_id int64
+}
+
+func (q *Queries) CountEntries(ctx context.Context, arg CountEntriesParam) (int64, error) {
+	tmp := q.db.QueryRowContext(ctx, CountEntriesSQL, arg.Account_id)
+
+	var count int64
+	err := tmp.Scan(&count)
+
+	return count, err
 }
 
 func (q *Queries) CreateEntries(ctx context.Context, arg CreateEntriesParam) (Entries, error) {
