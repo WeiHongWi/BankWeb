@@ -3,6 +3,7 @@ package CRUD
 import (
 	"bank/util"
 	"context"
+	"database/sql"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -106,4 +107,25 @@ func TestListAccount(t *testing.T) {
 		require.Equal(t, account_list1[j].Owner, account_list2[j].Owner)
 	}
 
+}
+
+func TestDeleteAccount(t *testing.T) {
+	account := createRandomAcount(t)
+
+	arg := DeleteAccountParam{
+		ID: account.ID,
+	}
+
+	arg_get := GetAccountParam{
+		ID: account.ID,
+	}
+
+	err := test.DeleteAccount(context.Background(), arg)
+
+	require.NoError(t, err)
+
+	account2, err1 := test.GetAccount(context.Background(), arg_get)
+	require.Error(t, err1)
+	require.EqualError(t, err1, sql.ErrNoRows.Error())
+	require.Empty(t, account2)
 }
