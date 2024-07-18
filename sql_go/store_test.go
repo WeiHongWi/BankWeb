@@ -33,6 +33,7 @@ func TestTransactionTx(t *testing.T) {
 		}()
 	}
 
+	existed := make(map[int]bool)
 	for i := 0; i < n; i++ {
 		err := <-errs
 		require.NoError(t, err)
@@ -82,6 +83,45 @@ func TestTransactionTx(t *testing.T) {
 		}
 		_, err = store.GetEntries(context.Background(), arg_to)
 		require.NoError(t, err)
+
+		//Check the from account
+		from_account := result.From_account
+		require.NotEmpty(t, from_account)
+		require.Equal(t, a1.ID, from_account.ID)
+
+		//Check the to account
+		to_account := result.To_account
+		require.NotEmpty(t, to_account)
+		require.Equal(t, a2.ID, to_account.ID)
+
+		//Check the account's balance
+		dif_1 := a1.Balance - from_account.Balance
+		dif_2 := to_account.Balance - a2.Balance
+		require.Equal(t, dif_1, dif_2)
+		require.True(t, dif_1 > 0)
+		require.True(t, dif_1%amount == 0)
+		k := int(dif_1 / amount)
+
+		require.True(t, 1 <= k && k <= n)
+		require.NotContains(t, existed, k)
+		existed[k] = true
+
 	}
+	//Check the final balance for both from account and to account
+	update_a1, err := store.GetAccount(context.Background(), GetAccountParam{
+		ID: a1.ID,
+	})
+
+	require.NoError(t, err)
+	require.NotEmpty(t, update_a1)
+	require.Equal(t, update_a1.Balance+int64(n)*amount, a1.Balance)
+
+	update_a2, err := store.GetAccount(context.Background(), GetAccountParam{
+		ID: a2.ID,
+	})
+
+	require.NoError(t, err)
+	require.NotEmpty(t, update_a2)
+	require.Equal(t, update_a2.Balance-int64(n)*amount, a2.Balance)
 
 }

@@ -90,6 +90,51 @@ func (store *Store) TransactionTx(ctx context.Context, arg TransactionTxParam) (
 		if err != nil {
 			return err
 		}
+
+		account1, err := q.GetAccount(ctx, GetAccountParam{
+			ID: arg.From_account_id,
+		})
+		if err != nil {
+			return err
+		}
+
+		err = q.UpdateAccount(ctx, UpdateAccountParam{
+			Balance: account1.Balance - arg.Amount,
+			ID:      account1.ID,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.From_account, err = q.GetAccount(ctx, GetAccountParam{
+			ID: account1.ID,
+		})
+		if err != nil {
+			return err
+		}
+
+		account2, err := q.GetAccount(ctx, GetAccountParam{
+			ID: arg.To_account_id,
+		})
+		if err != nil {
+			return err
+		}
+
+		err = q.UpdateAccount(ctx, UpdateAccountParam{
+			Balance: account2.Balance + arg.Amount,
+			ID:      account2.ID,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.To_account, err = q.GetAccount(ctx, GetAccountParam{
+			ID: account2.ID,
+		})
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 
