@@ -97,7 +97,7 @@ func TestTransactionTx(t *testing.T) {
 		//Check the account's balance
 		dif_1 := a1.Balance - from_account.Balance
 		dif_2 := to_account.Balance - a2.Balance
-		require.Equal(t, dif_1, dif_2)
+		require.Equal(t, dif_2, dif_1)
 		require.True(t, dif_1 > 0)
 		require.True(t, dif_1%amount == 0)
 		k := int(dif_1 / amount)

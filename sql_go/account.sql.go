@@ -63,6 +63,30 @@ COUNT(*)
 FROM "Account"
 `
 
+const GetAccountForUpdateSQL = `
+SELECT 
+"ID","Owner","Balance","Currency","Createdat" 
+FROM "Account" WHERE "ID" = $1
+FOR NO KEY UPDATE`
+
+type GetAccountForUpdateParam struct {
+	ID int64
+}
+
+func (q *Queries) GetAccountForUpdate(ctx context.Context, arg GetAccountForUpdateParam) (Account, error) {
+	tmp := q.db.QueryRowContext(ctx, GetAccountForUpdateSQL, arg.ID)
+	var A Account
+	err := tmp.Scan(
+		&A.ID,
+		&A.Owner,
+		&A.Balance,
+		&A.Currency,
+		&A.Createdat,
+	)
+
+	return A, err
+}
+
 func (q *Queries) CountOfAccount(ctx context.Context) int64 {
 	row := q.db.QueryRowContext(ctx, CountOfAccountSQL)
 

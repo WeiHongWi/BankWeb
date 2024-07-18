@@ -91,7 +91,7 @@ func (store *Store) TransactionTx(ctx context.Context, arg TransactionTxParam) (
 			return err
 		}
 
-		account1, err := q.GetAccount(ctx, GetAccountParam{
+		account1, err := q.GetAccountForUpdate(ctx, GetAccountForUpdateParam{
 			ID: arg.From_account_id,
 		})
 		if err != nil {
@@ -106,7 +106,7 @@ func (store *Store) TransactionTx(ctx context.Context, arg TransactionTxParam) (
 			return err
 		}
 
-		result.From_account, err = q.GetAccount(ctx, GetAccountParam{
+		result.From_account, err = q.GetAccountForUpdate(ctx, GetAccountForUpdateParam{
 			ID: account1.ID,
 		})
 		if err != nil {
