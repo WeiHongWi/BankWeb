@@ -28,8 +28,8 @@ func TestTransactionTx(t *testing.T) {
 
 			result, err := store.TransactionTx(context.Background(), arg_transac)
 
-			results <- result
 			errs <- err
+			results <- result
 		}()
 	}
 

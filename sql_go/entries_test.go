@@ -53,14 +53,15 @@ func TestGetEntries(t *testing.T) {
 }
 
 func TestListEntries(t *testing.T) {
+	account := createRandomAcount(t)
 	arg_count := CountEntriesParam{
-		Account_id: 1,
+		Account_id: account.ID,
 	}
 	offset, err := test.CountEntries(context.Background(), arg_count)
 	require.NoError(t, err)
 
 	arg := ListEntriesParam{
-		Account_id: 1,
+		Account_id: account.ID,
 		Limit:      5,
 		Offset:     int32(offset),
 	}
@@ -70,7 +71,7 @@ func TestListEntries(t *testing.T) {
 	var i int
 	for i = 0; i < int(arg.Limit); i++ {
 		arg_e := CreateEntriesParam{
-			Account_id: 1,
+			Account_id: account.ID,
 			Amount:     util.Random_money(),
 		}
 
