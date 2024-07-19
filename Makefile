@@ -10,4 +10,6 @@ migratedown:
 	migrate -path db/migration -database "postgresql://root:fighting@localhost:5432/bank?sslmode=disable" -verbose down
 test:
 	go test -v -cover ./...
-.PHONY: createdb,dropdb,postgres,migrateup,migratedownp
+server:
+	go run main.go
+.PHONY: createdb,dropdb,postgres,migrateup,migratedownp,server
