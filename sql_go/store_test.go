@@ -125,3 +125,60 @@ func TestTransactionTx(t *testing.T) {
 	require.Equal(t, update_a2.Balance-int64(n)*amount, a2.Balance)
 
 }
+
+func TestTransactionTxForTwoWay(t *testing.T) {
+	store := New_store(db)
+
+	a1 := createRandomAcount(t)
+	a2 := createRandomAcount(t)
+
+	n := 10
+	amount := int64(20)
+
+	//results := make(chan TransactionTxResult)
+	errs := make(chan error)
+	for i := 0; i < n; i++ {
+		fromID := a1.ID
+		toID := a2.ID
+		if i&1 == 1 {
+			fromID = a2.ID
+			toID = a1.ID
+		}
+		go func() {
+
+			arg_transac := TransactionTxParam{
+				From_account_id: fromID,
+				To_account_id:   toID,
+				Amount:          amount,
+			}
+
+			_, err := store.TransactionTx(context.Background(), arg_transac)
+
+			errs <- err
+			//results <- result
+		}()
+	}
+
+	//existed := make(map[int]bool)
+	for i := 0; i < n; i++ {
+		err := <-errs
+		require.NoError(t, err)
+	}
+	//Check the final balance for both from account and to account
+	update_a1, err := store.GetAccount(context.Background(), GetAccountParam{
+		ID: a1.ID,
+	})
+
+	require.NoError(t, err)
+	require.NotEmpty(t, update_a1)
+	require.Equal(t, update_a1.Balance, a1.Balance)
+
+	update_a2, err := store.GetAccount(context.Background(), GetAccountParam{
+		ID: a2.ID,
+	})
+
+	require.NoError(t, err)
+	require.NotEmpty(t, update_a2)
+	require.Equal(t, update_a2.Balance, a2.Balance)
+
+}
