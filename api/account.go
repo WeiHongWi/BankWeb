@@ -91,3 +91,33 @@ func (server *Server) listAccount(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, account)
 }
+
+type transferMoneyRequest struct {
+	From_account_id int64  `json:"from_account_id" binding:"required,min=1"`
+	To_account_id   int64  `json:"to_account_id" binding:"required,min=1"`
+	Amount          int64  `json:"amount" binding:"required,min=1"`
+	Currency        string `json:"currency" binding:"required,oneof=NT USD"`
+}
+
+func (server *Server) transferMoney(ctx *gin.Context) {
+	var request transferMoneyRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	arg := CRUD.TransactionTxParam{
+		From_account_id: request.From_account_id,
+		To_account_id:   request.To_account_id,
+		Amount:          request.Amount,
+	}
+
+	account, err := server.store.TransactionTx(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, account)
+
+}

@@ -20,6 +20,7 @@ func NewServer(store *CRUD.Store) *Server {
 	router.POST("/account", server.createAccount)
 	router.GET("/account/:id", server.getAccount)
 	router.GET("/account", server.listAccount)
+	router.POST("/transfer", server.transferMoney)
 	server.router = router
 	return server
 }
