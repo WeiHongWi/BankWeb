@@ -30,6 +30,6 @@ func main() {
 
 	err = server.Start(serveraddress)
 	if err != nil {
-		log.Fatalf("Cannot start the server!\n", err)
+		log.Printf("Cannot start the server!\n", err)
 	}
 }
