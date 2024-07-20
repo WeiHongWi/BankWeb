@@ -136,7 +136,7 @@ func (q *Queries) ListAccount(ctx context.Context, arg ListAccountParam) ([]Acco
 
 	defer tmps.Close()
 
-	var A_arr []Account
+	A_arr := []Account{}
 
 	for tmps.Next() {
 		var A Account
